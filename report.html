@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firstian Prosales - Integrated System</title>
+    <title>TARGET OPERASI POLRI</title>
     
     <!-- CesiumJS Resources -->
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
@@ -12,8 +12,7 @@
     <style>
         :root {
             --primary-red: #ff3b3b;
-            --wa-green: #25D366;
-            --ui-bg: rgba(0, 0, 0, 0.7); 
+            --ui-bg: rgba(0, 0, 0, 0.85); 
             --card-bg: rgba(255, 255, 255, 0.05); 
             --accent-glow: #ff0000;
             --text-main: #ffffff;
@@ -31,8 +30,16 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; 
         }
 
+        .title-wrapper {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Instructions Overlay */
         .map-instruction {
-            position: absolute; top: 15px; right: 440px; z-index: 20;
+            position: absolute; top: 15px; right: 430px; z-index: 20;
             display: flex; align-items: center; pointer-events: none;
             animation: pulse-glow 2s infinite;
         }
@@ -44,6 +51,7 @@
             box-shadow: 0 0 15px var(--accent-glow);
         }
 
+        /* Sidebar UI */
         .sidebar { 
             position: absolute; right: 0; top: 0; width: 380px; height: 100%;
             background: var(--ui-bg); display: flex; flex-direction: column;
@@ -52,43 +60,20 @@
         }
 
         .header { 
-            padding: 25px 20px; 
+            padding: 20px; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
             text-align: center; 
             flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         .polri-logo {
             width: 120px;
             height: auto;
-            margin-bottom: 15px;
-            display: block;
-            filter: drop-shadow(0 0 8px rgba(255,0,0,0.5));
+            margin-bottom: 10px;
         }
 
-        .title-wrapper {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .header .polda-name { 
-            font-size: 24px; 
-            font-weight: 900; 
-            color: var(--text-main); 
-        }
-
-        .header .target-tag { 
-            color: var(--primary-red); 
-            font-weight: 800; 
-            font-size: 28px; 
-            text-shadow: 0 0 10px var(--accent-glow); 
-            text-transform: uppercase;
-        }
+        .header .polda-name { font-size: 20px; font-weight: 900; color: var(--text-main);  }
+        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 20px; text-shadow: 0 0 10px var(--accent-glow); }
 
         .scroll-container { 
             flex: 1; 
@@ -96,9 +81,11 @@
             padding: 15px;
             -webkit-overflow-scrolling: touch;
         }
+        
         .scroll-container::-webkit-scrollbar { width: 4px; }
         .scroll-container::-webkit-scrollbar-thumb { background: var(--primary-red); }
 
+        /* Card Style */
         .property-card {
             background: var(--card-bg); border-radius: 8px; margin-bottom: 20px;
             border: 1px solid rgba(255,255,255,0.1); overflow: hidden; transition: 0.4s;
@@ -107,47 +94,45 @@
         .property-card.active { 
             border-color: var(--primary-red); 
             background: rgba(255, 59, 59, 0.15);
-            transform: scale(1.01);
+            transform: scale(1.02);
         }
 
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
         .card-content { padding: 15px; }
-        .card-content h3 { margin: 0 0 10px 0; font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; }
+        .card-content h3 { margin: 0 0 10px 0; font-size: 13px; line-height: 1.5; color: var(--text-main); font-weight: 500; }
         .coords-label { color: var(--text-sub); font-size: 10px; font-family: monospace; display: block; margin-bottom: 15px; }
 
-        .btn-group { display: flex; gap: 8px; }
         .btn { 
             flex: 1; border: none; border-radius: 4px; cursor: pointer; 
-            font-weight: 700; padding: 12px 5px; font-size: 10px; 
+            font-weight: 700; padding: 10px; font-size: 10px; 
             transition: 0.3s; text-decoration: none; text-align: center;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
             text-transform: uppercase; color: white;
         }
         
         .btn-track { background: var(--primary-red); }
-        .btn-track:hover { background: #ff0000; box-shadow: 0 0 15px var(--accent-glow); }
+        .btn-track:hover { background: #ff0000; box-shadow: 0 0 10px var(--accent-glow); }
         .btn-maps { background: var(--gmaps-blue); }
-        .btn-wa { background: var(--wa-green); }
+       .btn-wa { background: var(--wa-green); }
         .btn-wa svg { fill: white; width: 14px; height: 14px; }
 
         @keyframes pulse-glow {
-            0% { opacity: 0.6; transform: translateX(0); }
-            50% { opacity: 1; transform: translateX(5px); }
-            100% { opacity: 0.6; transform: translateX(0); }
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
         }
 
+        /* Hide Cesium credits for clean UI */
         .cesium-viewer-bottom { display: none !important; }
         .cesium-viewer-toolbar { right: 390px !important; }
 
         @media (max-width: 768px) {
-            #cesiumContainer { height: 40%; position: relative; }
-            .sidebar { position: relative; width: 100%; height: 60%; border-left: none; border-top: 2px solid var(--primary-red); background: rgba(0,0,0,0.9); }
+            #cesiumContainer { height: 40%; }
+            .sidebar { position: relative; width: 100%; height: 60%; border-left: none; border-top: 2px solid var(--primary-red); }
             .cesium-viewer-toolbar { right: 10px !important; }
             .map-instruction { right: 10px; top: 50px; }
-            .header .polda-name { font-size: 18px; }
-            .header .target-tag { font-size: 20px; }
         }
     </style>
 </head>
@@ -160,18 +145,20 @@
     </div>
 
     <div class="sidebar">
+        <!-- Header Section -->
         <div class="header">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Lambang_Polri.png" class="polri-logo" alt="Logo">
+            <img src="https://lh3.googleusercontent.com/u/0/d/1Mxur-oyaguVd2tdyrFfa4sSWGw4PFFuF" alt="POLRI" class="polri-logo">
             <div class="title-wrapper">
                 <span class="polda-name">firstian</span>
                 <span class="target-tag">PROSALES</span>
             </div>
         </div>
+        
+        <!-- Scrollable List Section -->
         <div id="propertyList" class="scroll-container"></div>
     </div>
 
 <script>
-    // 1. Inisialisasi Viewer
     const viewer = new Cesium.Viewer('cesiumContainer', {
         terrainProvider: new Cesium.EllipsoidTerrainProvider(),
         animation: false,
@@ -185,9 +172,8 @@
         sceneModePicker: true
     });
 
-    // 2. Gabungan Database Properti & Target
     const manualProperties = [
-        {
+              {
             name: `LT: 550m2 - LB: 200m2 (2 Lantai)<br>Jl. Raya Madrasah No.5, Cilandak Timur<br>SHM | Harga: 16.5M (Nego)<br>Pemilik: firstian`,
             coords: [-6.279543, 106.817916],
             ytId: "Smv_TT3FIdg"
@@ -197,23 +183,34 @@
             coords: [-6.249918, 106.822152],
             ytId: "sMykOCM9C7E"
         },
-        {
-            name: `TARGET OPERASI A<br> ANGGOTA POLRI : AIPDA VABER PURBA <br> DIKTUKBA POLRI 2003-2004<br> NUSANTARA Z4Z9 `, 
-            coords: [-6.116531515275683, 106.8934121286276], 
-            ytId: "L2kgotNKFP8" 
-        },
-        {
-            name: `LT : 2636m2<br>Jalan H.Saleh Rt/rw : 002/002<br>Kelurahan : Benda baru Kecamatan : Pamulang<br>Kota : Tanggerang selatan<br>SHM | Harga : Rp6.600.000.000`,
-            coords: [-6.339448, 106.721216],
+     {
+            name: `LT : 2636m2<br>
+Jalan H.Saleh Rt/rw : 002/002<br>
+Kelurahan :  Benda baru Kecamatan : Pamulang<br>
+Kota : Tanggerang selatan<br>
+Kepemilikan : Sertifikat hak milik<br>
+Perijinan : IMB<br>
+Konsep Landscape : Pertandingan memancing<br>
+Harga jual : Rp6.600.000.000<br>
+Pemilik: firstian`,
+            coords: [-6.339448060744899, 106.72121687314915],
             ytId: "c4LvtHmeerk"
         },
-        {
-            name: `LT : 2170m2<br>Desa : Pasir angin Megamendung-bogor<br>SHM | Vintage bogor<br>Harga : Rp 4.000.000.000,-(nego)`,
+     {
+            name: `LT : 2170m2
+Jalan pasir angin Rt/rw : 002/05<br>
+Desa : Pasir angin Megamendung-bogor<br>
+Kepemilikan : Sertifikat hak milik<br>
+Perijinan : IMB<br>
+Konsep arsitektur : Vintage bogor<br>
+Harga jual : Rp 4.000.000.000,-(nego)<br>
+Pemilik: firstian`,
             coords: [-6.646974, 106.880995],
             ytId: "Pe0kIs5fAMQ"
         },
+
         {
-            name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Depok<br>Harga: Rp800.000.000 (Nego)`,
+            name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Serua, Bojongsari, Depok<br>Harga: Rp800.000.000 (Nego)`,
             coords: [-6.364704, 106.732347],
             ytId: "lKZUWHO2gbE"
         },
@@ -223,109 +220,119 @@
             ytId: "-AEYUZ-8aM4"
         },
         {
-            name: `LT : 420m2 - lb400m2<br>Ciganjur - Jagakarsa - jaksel<br>Harga: Rp4.500.000.000,-(nego)`,
+            name: `LT: 200m2 - lb164m2<br>Jagakarsa - jakarta selatan<br>harga jual Rp2.500.000.000,-(nego)`,
+            coords: [-6.323768, 106.812401],
+            ytId: "eg5pMXkgFV4"
+        },
+        {
+            name: `LT : 203m2 - lb180m2<br>kel.grogol kec.limo kota-depok<br>harga jual Rp2.000.000.000,-(nego)`,
+            coords: [-6.379593, 106.780578], 
+            ytId: "9SPs1PHw7Js"
+        },
+        {
+            name: `LT : 189m2 - lb145m2<br>sukamaju baru - tapos - depok<br>harga jual : 2.000.000.000(nego)`,
+            coords: [-6.404723, 106.870182], 
+            ytId: "8s8YxgiPyxM"
+        },
+        {
+            name: `LT : 420m2 - lb400m2<br>Ciganjur - Jagakarsa - jaksel<br>harga jual total Rp4.500.000.000,-(nego)`,
             coords: [-6.339767, 106.806890], 
             ytId: "jcAshT7-7QU"
         },
         {
-            name: `LT : 94m2 - lb120m2<br>Kebon jeruk - Jakarta barat<br>Harga: Rp 2.000.000.000,-(nego)`,
+            name: `LT : 296m2-lb200m2<br>pamulang barat-tanggerang selatan<br>harga jual Rp3.200.000.000,-`,
+            coords: [-6.339291, 106.727947], 
+            ytId: "FypVuAPrnqE"
+        },
+        {
+            name: `LT : 660m2 - lb120m2<br>kel. Kukusan kec. Beji-depok<br>harga jual Rp5.500.000.000,-(nego)`,
+            coords: [-6.357698, 106.816113], 
+            ytId: "8L1HXULny0I"
+        },
+        {
+            name: `LT : 220m2 - lb180m2<br>mampang - pancoran mas depok<br>harga jual 2.000.000.000,-(nego)`,
+            coords: [-6.387974, 106.788940], 
+            ytId: "EdphwwG7A-8"
+        },
+        {
+            name: `LT : 94m2 - lb120m2<br>Kebon jeruk - Jakarta barat<br>Harga jual : Rp 2.000.000.000,-(nego)`,
             coords: [-6.214339, 106.768035], 
             ytId: "jLs8IaosiWc"
         }
     ];
 
     let activeIndex = null;
+function renderList() {
+    const container = document.getElementById('propertyList');
+    container.innerHTML = '';
 
-    // 3. Render List
-    function renderList() {
-        const container = document.getElementById('propertyList');
-        container.innerHTML = '';
-        manualProperties.forEach((prop, index) => {
-            const cleanName = prop.name.replace(/<br>/g, ' ');
-            const waUrl = `https://wa.me/6287796126529?text=Halo%20Firstian,%20saya%20tertarik%20dengan%20properti%20ini:%20${encodeURIComponent(cleanName)}`;
-            
-            const card = document.createElement('div');
-            card.className = 'property-card';
-            card.id = `card-${index}`;
-            card.innerHTML = `
-                <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/${prop.ytId}?mute=1&loop=1&playlist=${prop.ytId}" allowfullscreen></iframe>
+    manualProperties.forEach((prop, index) => {
+        // 1. Prepare the clean name and WhatsApp URL
+        const cleanName = prop.name.replace(/<br>/g, ' ');
+        const waUrl = `https://wa.me/6287796126529?text=Halo%20Firstian,%20saya%20tertarik%20dengan%20properti%20ini:%20${encodeURIComponent(cleanName)}`;
+
+        // 2. Create the card element
+        const card = document.createElement('div');
+        card.className = 'property-card';
+        card.id = `card-${index}`;
+
+        // 3. Build the inner HTML (now including the WhatsApp button)
+        card.innerHTML = `
+            <div class="video-wrapper">
+                <iframe src="https://www.youtube.com/embed/${prop.ytId}?autoplay=0&mute=1" allowfullscreen></iframe>
+            </div>
+            <div class="card-content">
+                <h3>${prop.name}</h3>
+                <span class="coords-label">COORDS: ${prop.coords[0].toFixed(6)}, ${prop.coords[1].toFixed(6)}</span>
+                <div style="display:flex; gap:8px; flex-wrap: wrap;">
+                    <button class="btn btn-track" onclick="focusTarget(${prop.coords[0]}, ${prop.coords[1]}, ${index})">POSISI</button>
+                    <a href="https://www.google.com/maps?q=${prop.coords[0]},${prop.coords[1]}" target="_blank" class="btn btn-maps">LOKASI</a>
+                    <a href="${waUrl}" target="_blank" class="btn btn-wa" style="background-color: #25D366; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; display: flex; align-items: center;">HUBUNGI</a>
                 </div>
-                <div class="card-content">
-                    <h3>${prop.name}</h3>
-                    <span class="coords-label">COORDS: ${prop.coords[0].toFixed(6)}, ${prop.coords[1].toFixed(6)}</span>
-                    <div class="btn-group">
-                        <button class="btn btn-track" onclick="focusTarget(${prop.coords[0]}, ${prop.coords[1]}, ${index})">POSISI</button>
-                        <a href="https://www.google.com/maps?q=${prop.coords[0]},${prop.coords[1]}" target="_blank" class="btn btn-maps">LOKASI</a>
-                        <a href="${waUrl}" target="_blank" class="btn btn-wa">
-                            <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.319 1.592 5.448 0 9.886-4.438 9.889-9.887.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.735-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                        </a>
-                    </div>
-                </div>`;
-            container.appendChild(card);
-        });
-    }
+            </div>`;
 
-    // 4. Fungsi Fokus Target & Animasi
+        container.appendChild(card);
+    });
+}
+
     function focusTarget(lat, lng, index) {
         viewer.entities.removeAll(); 
         activeIndex = index;
         
         document.querySelectorAll('.property-card').forEach(c => c.classList.remove('active'));
         const activeCard = document.getElementById(`card-${index}`);
-        if(activeCard) {
-            activeCard.classList.add('active');
-            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            
-            const iframe = activeCard.querySelector('iframe');
-            const videoId = manualProperties[index].ytId;
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
-        }
+        activeCard.classList.add('active');
 
         const destination = Cesium.Cartesian3.fromDegrees(lng, lat);
 
-        // Garis Penghubung 3D
-        viewer.entities.add({
-            polyline: {
-                positions: new Cesium.CallbackProperty(() => {
-                    const cardElem = document.getElementById(`card-${activeIndex}`);
-                    if(!cardElem) return [destination, destination];
-                    const rect = cardElem.getBoundingClientRect();
-                    const screenPos = new Cesium.Cartesian2(rect.left, rect.top + (rect.height / 2));
-                    const ray = viewer.camera.getPickRay(screenPos);
-                    const startPos = viewer.scene.globe.pick(ray, viewer.scene) || viewer.camera.position;
-                    return [startPos, destination];
-                }, false),
-                width: 2,
-                material: Cesium.Color.RED.withAlpha(0.6)
-            }
-        });
-
-        // Marker Tactical Crosshair
-        const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="6"/><circle cx="50" cy="50" r="12" fill="none" stroke="#ff3b3b" stroke-width="3" /><circle cx="50" cy="50" r="5" fill="#ff3b3b" /></svg>`;
+        // Crosshair Marker
+        const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <circle cx="50" cy="50" r="12" fill="none" stroke="#ff3b3b" stroke-width="3" />
+            <circle cx="50" cy="50" r="5" fill="#ff3b3b" />
+        </svg>`;
 
         viewer.entities.add({
             position: destination,
             billboard: {
                 image: 'data:image/svg+xml;base64,' + btoa(targetSvg),
-                scale: new Cesium.CallbackProperty((time) => {
-                    const sec = Cesium.JulianDate.secondsDifference(time, Cesium.JulianDate.now());
-                    return 0.8 + Math.abs(Math.sin(sec * 4)) * 0.4; 
-                }, false),
-                verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND 
+                scale: 1.0,
+                verticalOrigin: Cesium.VerticalOrigin.CENTER
             }
         });
 
         viewer.camera.flyTo({
             destination: Cesium.Cartesian3.fromDegrees(lng, lat, 500),
             orientation: { pitch: Cesium.Math.toRadians(-35.0), heading: 0.0 },
-            duration: 2.5
+            duration: 2
         });
     }
 
     renderList();
-    viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(106.82, -6.17, 30000) });
+    viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(106.82, -6.17, 20000) });
 </script>
 </body>
 </html>
