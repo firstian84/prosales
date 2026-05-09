@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firstian Prosales </title>
+    <title>TARGET OPERASI POLRI</title>
     
+    <!-- CesiumJS Resources -->
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     
     <style>
         :root {
             --primary-red: #ff3b3b;
-            --wa-green: #25D366;
-            --ui-bg: rgba(0, 0, 0, 0.85); 
-            --card-bg: rgba(255, 255, 255, 0.03); 
+            --ui-bg: rgba(0, 0, 0, 0.3); 
+            --card-bg: rgba(255, 255, 255, 0.05); 
             --accent-glow: #ff0000;
             --text-main: #ffffff;
             --text-sub: rgba(255, 255, 255, 0.6);
@@ -30,8 +30,9 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; 
         }
 
+        /* Instruksi Ganti Basemap */
         .map-instruction {
-            position: absolute; top: 15px; right: 400px; z-index: 20;
+            position: absolute; top: 15px; right: 440px; z-index: 20;
             display: flex; align-items: center; pointer-events: none;
             animation: pulse-glow 2s infinite;
         }
@@ -43,82 +44,98 @@
             box-shadow: 0 0 15px var(--accent-glow);
         }
 
+        /* Sidebar UI */
         .sidebar { 
             position: absolute; right: 0; top: 0; width: 380px; height: 100%;
             background: var(--ui-bg); display: flex; flex-direction: column;
             border-left: 1px solid rgba(255, 255, 255, 0.1); z-index: 10; 
             box-shadow: -10px 0 30px rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
         }
 
         .header { 
             padding: 25px 20px; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
             text-align: center; 
-            flex-shrink: 0;
+            flex-shrink: 0; /* Penting: Agar header tidak menyusut saat scroll di Android */
         }
 
+        /* Styling Logo Polri */
         .polri-logo {
-            width: 100px; height: auto; margin-bottom: 15px;
-            filter: drop-shadow(0 0 10px var(--primary-red));
+            width: 200px;
+            height: auto;
+            margin-bottom: 15px;
         }
 
-        .title-wrapper {
-            display: flex; align-items: baseline; justify-content: center; gap: 8px;
-        }
-
-        .polda-name { font-size: 22px; font-weight: 900; letter-spacing: 1px; }
-        .target-tag { color: var(--primary-red); font-weight: 900; font-size: 22px; text-shadow: 0 0 10px var(--accent-glow); }
+        .header .unit-name { font-size: 9px; opacity: 0.7; display: block; letter-spacing: 2px; margin-bottom: 4px; }
+        .header .polda-name { font-size: 24px; font-weight: 900; display: block; color: var(--text-main); }
+        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 28px; text-shadow: 0 0 10px var(--accent-glow); }
 
         .scroll-container { 
-            flex: 1; overflow-y: auto; padding: 15px;
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 15px;
+            -webkit-overflow-scrolling: touch; /* Scroll halus di perangkat sentuh */
         }
         .scroll-container::-webkit-scrollbar { width: 4px; }
         .scroll-container::-webkit-scrollbar-thumb { background: var(--primary-red); }
 
+        /* Card Style */
         .property-card {
             background: var(--card-bg); border-radius: 8px; margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; transition: 0.4s;
         }
 
         .property-card.active { 
             border-color: var(--primary-red); 
-            background: rgba(255, 59, 59, 0.08);
-            box-shadow: inset 0 0 15px rgba(255,0,0,0.2);
+            background: rgba(255, 59, 59, 0.15);
+            transform: scale(1.02);
         }
 
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
         .card-content { padding: 15px; }
-        .card-content h3 { margin: 0 0 10px 0; font-size: 13px; line-height: 1.5; color: var(--text-main); font-weight: 500; }
+        .card-content h3 { margin: 0 0 10px 0; font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 500; }
         .coords-label { color: var(--text-sub); font-size: 10px; font-family: monospace; display: block; margin-bottom: 15px; }
 
-        .btn-group { display: flex; gap: 6px; }
+        /* Buttons */
         .btn { 
             flex: 1; border: none; border-radius: 4px; cursor: pointer; 
-            font-weight: 800; padding: 10px 2px; font-size: 10px; 
-            transition: 0.2s; text-decoration: none; text-align: center;
-            color: white; text-transform: uppercase;
+            font-weight: 700; padding: 12px; font-size: 10px; 
+            transition: 0.3s; text-decoration: none; text-align: center;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-transform: uppercase; color: white;
         }
         
         .btn-track { background: var(--primary-red); }
+        .btn-track:hover { background: #ff0000; box-shadow: 0 0 15px var(--accent-glow); }
         .btn-maps { background: var(--gmaps-blue); }
-        .btn-wa { background: var(--wa-green); display: flex; align-items: center; justify-content: center; }
 
         @keyframes pulse-glow {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; box-shadow: 0 0 20px var(--accent-glow); }
-            100% { opacity: 0.7; }
+            0% { opacity: 0.6; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+            100% { opacity: 0.6; transform: translateX(0); }
         }
 
         .cesium-viewer-bottom { display: none !important; }
         .cesium-viewer-toolbar { right: 390px !important; }
 
         @media (max-width: 768px) {
-            #cesiumContainer { height: 40%; }
-            .sidebar { width: 100%; height: 60%; position: relative; }
-            .map-instruction { display: none; }
+            #cesiumContainer { height: 40%; position: relative; }
+            .sidebar { 
+                position: relative; 
+                width: 100%; 
+                height: 60%; 
+                border-left: none; 
+                border-top: 2px solid var(--primary-red); 
+                background: rgba(0,0,0,0.8); /* Overlay lebih gelap di mobile */
+            }
+            .cesium-viewer-toolbar { right: 10px !important; }
+            .map-instruction { right: 10px; top: 50px; }
+            .polri-logo { width: 120px; }
+            .header .unit-name  { font-size: 6px; }
+            .header .polda-name { font-size: 18px; }
+            .header .target-tag { font-size: 22px; }
         }
     </style>
 </head>
@@ -126,8 +143,9 @@
 
     <div id="cesiumContainer"></div>
 
+    <!-- Instruksi Overlay -->
     <div class="map-instruction">
-        <div class="instruction-text">MAP ACTIVE: SCANNING MODE</div>
+        <div class="instruction-text">GANTI BASEMAP > OTHER > ARCGIS WORLD IMAGERY</div>
     </div>
 
     <div class="sidebar">
@@ -179,49 +197,72 @@
         }
     ];
 
+    let activeIndex = null;
+
+    // 3. Render Daftar Target ke Sidebar
     function renderList() {
         const container = document.getElementById('propertyList');
         container.innerHTML = '';
         manualProperties.forEach((prop, index) => {
-            const cleanName = prop.name.replace(/<br>/g, ' ');
-            const waUrl = `https://wa.me/6287796126529?text=Halo%20Firstian,%20saya%20tertarik%20dengan%20properti%20ini:%20${encodeURIComponent(cleanName)}`;
-            
             const card = document.createElement('div');
             card.className = 'property-card';
             card.id = `card-${index}`;
             card.innerHTML = `
                 <div class="video-wrapper">
-                    <iframe src="https://www.youtube.com/embed/${prop.ytId}?mute=1&loop=1&playlist=${prop.ytId}" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/${prop.ytId}?autoplay=1&mute=1&loop=1&playlist=${prop.ytId}" allowfullscreen></iframe>
                 </div>
                 <div class="card-content">
                     <h3>${prop.name}</h3>
-                    <span class="coords-label">GPS: ${prop.coords[0].toFixed(6)}, ${prop.coords[1].toFixed(6)}</span>
-                    <div class="btn-group">
-                        <button class="btn btn-track" onclick="focusTarget(${prop.coords[0]}, ${prop.coords[1]}, ${index})">TRACK</button>
-                        <a href="https://www.google.com/maps?q=${prop.coords[0]},${prop.coords[1]}" target="_blank" class="btn btn-maps">MAPS</a>
-                        <a href="${waUrl}" target="_blank" class="btn btn-wa">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.484 8.412-.003 6.557-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.309 1.656zm6.29-4.464c1.589.943 3.13 1.411 4.75 1.412 5.228 0 9.482-4.254 9.485-9.483.002-2.535-.985-4.917-2.777-6.71s-4.175-2.78-6.711-2.78c-5.228 0-9.483 4.256-9.485 9.484-.001 1.748.476 3.332 1.391 4.63l-.947 3.46 3.568-.936-.275.183zm10.967-6.658c-.3-.15-1.774-.875-2.048-.976-.275-.1-.475-.15-.675.15-.2.3-.775.976-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.485-.89-.793-1.49-1.773-1.665-2.074-.175-.3-.019-.462.13-.611.135-.133.3-.35.45-.525.15-.175.2-.3.3-.5s.05-.375-.025-.525c-.075-.15-.675-1.625-.925-2.225-.244-.589-.491-.51-.675-.519-.174-.009-.374-.01-.574-.01s-.525.075-.8.375c-.275.3-1.05 1.026-1.05 2.5s1.075 2.9 1.225 3.1c.15.2 2.116 3.231 5.125 4.53.715.31 1.273.495 1.708.633.718.228 1.37.196 1.885.119.574-.085 1.774-.725 2.025-1.425.25-.7.25-1.299.175-1.425-.075-.125-.275-.2-.575-.35z"/></svg>
-                        </a>
+                    <span class="coords-label">COORDS: ${prop.coords[0].toFixed(6)}, ${prop.coords[1].toFixed(6)}</span>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-track" onclick="focusTarget(${prop.coords[0]}, ${prop.coords[1]}, ${index})">POSISI</button>
+                        <a href="https://www.google.com/maps?q=${prop.coords[0]},${prop.coords[1]}" target="_blank" class="btn btn-maps">LOKASI</a>
                     </div>
                 </div>`;
             container.appendChild(card);
         });
     }
 
+    // 4. Fungsi Navigasi Kamera & Marker 3D
     function focusTarget(lat, lng, index) {
         viewer.entities.removeAll(); 
+        activeIndex = index;
         
+        // Update UI Card
         document.querySelectorAll('.property-card').forEach(c => c.classList.remove('active'));
         const activeCard = document.getElementById(`card-${index}`);
-        if(activeCard) {
-            activeCard.classList.add('active');
-            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        activeCard.classList.add('active');
+        activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
         const destination = Cesium.Cartesian3.fromDegrees(lng, lat);
 
-        // UI Target Crosshair
-        const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="6"/><circle cx="50" cy="50" r="15" fill="none" stroke="#ff3b3b" stroke-width="2" /><circle cx="50" cy="50" r="5" fill="#ff3b3b" /></svg>`;
+        // --- GARIS PENGHUBUNG 3D ---
+        viewer.entities.add({
+            polyline: {
+                positions: new Cesium.CallbackProperty(() => {
+                    const cardElem = document.getElementById(`card-${activeIndex}`);
+                    if(!cardElem) return [destination, destination];
+                    const rect = cardElem.getBoundingClientRect();
+                    const screenPos = new Cesium.Cartesian2(rect.left, rect.top + (rect.height / 2));
+                    const ray = viewer.camera.getPickRay(screenPos);
+                    const startPos = viewer.scene.globe.pick(ray, viewer.scene) || viewer.camera.position;
+                    return [startPos, destination];
+                }, false),
+                width: 2,
+                material: Cesium.Color.RED.withAlpha(0.5),
+                arcType: Cesium.ArcType.GEODESIC
+            }
+        });
+
+        // --- TARGET MARKER (SVG TACTICAL CROSSHAIR) ---
+        const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <circle cx="50" cy="50" r="12" fill="none" stroke="#ff3b3b" stroke-width="3" />
+            <circle cx="50" cy="50" r="5" fill="#ff3b3b" />
+        </svg>`;
 
         viewer.entities.add({
             position: destination,
@@ -229,28 +270,30 @@
                 image: 'data:image/svg+xml;base64,' + btoa(targetSvg),
                 scale: new Cesium.CallbackProperty((time) => {
                     const sec = Cesium.JulianDate.secondsDifference(time, Cesium.JulianDate.now());
-                    return 0.7 + Math.abs(Math.sin(sec * 4)) * 0.3; 
+                    return 0.8 + Math.abs(Math.sin(sec * 4)) * 0.4; 
                 }, false),
-                verticalOrigin: Cesium.VerticalOrigin.CENTER
+                verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
             }
         });
 
-        // Fly to animation
+        // --- ANIMASI FLY-TO KAMERA ---
         viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(lng, lat, 500),
+            destination: Cesium.Cartesian3.fromDegrees(lng, lat, 400),
             orientation: { 
-                pitch: Cesium.Math.toRadians(-35.0), 
+                pitch: Cesium.Math.toRadians(-30.0), 
                 heading: 0.0 
             },
-            duration: 2
+            duration: 2.5
         });
     }
 
+    // Inisialisasi awal
     renderList();
     
-    // Initial View
+    // Set tampilan awal ke Jakarta
     viewer.camera.setView({ 
-        destination: Cesium.Cartesian3.fromDegrees(106.82, -6.17, 25000) 
+        destination: Cesium.Cartesian3.fromDegrees(106.82, -6.17, 30000) 
     });
 </script>
 </body>
