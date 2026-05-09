@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firstian Prosales</title>
+    <title>Firstian Prosales - Integrated System</title>
     
+    <!-- CesiumJS Resources -->
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
     
@@ -12,7 +13,7 @@
         :root {
             --primary-red: #ff3b3b;
             --wa-green: #25D366;
-            --ui-bg: rgba(0, 0, 0, 0.6); 
+            --ui-bg: rgba(0, 0, 0, 0.7); 
             --card-bg: rgba(255, 255, 255, 0.05); 
             --accent-glow: #ff0000;
             --text-main: #ffffff;
@@ -48,7 +49,6 @@
             background: var(--ui-bg); display: flex; flex-direction: column;
             border-left: 1px solid rgba(255, 255, 255, 0.1); z-index: 10; 
             box-shadow: -10px 0 30px rgba(0,0,0,0.8);
-           
         }
 
         .header { 
@@ -106,7 +106,7 @@
 
         .property-card.active { 
             border-color: var(--primary-red); 
-            background: rgba(255, 59, 59, 0.1);
+            background: rgba(255, 59, 59, 0.15);
             transform: scale(1.01);
         }
 
@@ -161,10 +161,7 @@
 
     <div class="sidebar">
         <div class="header">
-            <img src="https://lh3.googleusercontent.com/u/0/d/1Mxur-oyaguVd2tdyrFfa4sSWGw4PFFuF" 
-                 onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/b/bb/Lambang_Polda_Metro_Jaya.png'"
-                 class="polri-logo" alt="Logo">
-            
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Lambang_Polri.png" class="polri-logo" alt="Logo">
             <div class="title-wrapper">
                 <span class="polda-name">firstian</span>
                 <span class="target-tag">PROSALES</span>
@@ -174,6 +171,7 @@
     </div>
 
 <script>
+    // 1. Inisialisasi Viewer
     const viewer = new Cesium.Viewer('cesiumContainer', {
         terrainProvider: new Cesium.EllipsoidTerrainProvider(),
         animation: false,
@@ -187,8 +185,9 @@
         sceneModePicker: true
     });
 
+    // 2. Gabungan Database Properti & Target
     const manualProperties = [
-         {
+        {
             name: `LT: 550m2 - LB: 200m2 (2 Lantai)<br>Jl. Raya Madrasah No.5, Cilandak Timur<br>SHM | Harga: 16.5M (Nego)<br>Pemilik: firstian`,
             coords: [-6.279543, 106.817916],
             ytId: "Smv_TT3FIdg"
@@ -198,34 +197,23 @@
             coords: [-6.249918, 106.822152],
             ytId: "sMykOCM9C7E"
         },
-     {
-            name: `LT : 2636m2<br>
-Jalan H.Saleh Rt/rw : 002/002<br>
-Kelurahan :  Benda baru Kecamatan : Pamulang<br>
-Kota : Tanggerang selatan<br>
-Kepemilikan : Sertifikat hak milik<br>
-Perijinan : IMB<br>
-Konsep Landscape : Pertandingan memancing<br>
-Harga jual : Rp6.600.000.000<br>
-Pemilik: firstian`,
-            coords: [-6.339448060744899, 106.72121687314915],
+        {
+            name: `TARGET OPERASI A<br> ANGGOTA POLRI : AIPDA VABER PURBA <br> DIKTUKBA POLRI 2003-2004<br> NUSANTARA Z4Z9 `, 
+            coords: [-6.116531515275683, 106.8934121286276], 
+            ytId: "L2kgotNKFP8" 
+        },
+        {
+            name: `LT : 2636m2<br>Jalan H.Saleh Rt/rw : 002/002<br>Kelurahan : Benda baru Kecamatan : Pamulang<br>Kota : Tanggerang selatan<br>SHM | Harga : Rp6.600.000.000`,
+            coords: [-6.339448, 106.721216],
             ytId: "c4LvtHmeerk"
         },
-     {
-            name: `LT : 2170m2
-Jalan pasir angin Rt/rw : 002/05<br>
-Desa : Pasir angin Megamendung-bogor<br>
-Kepemilikan : Sertifikat hak milik<br>
-Perijinan : IMB<br>
-Konsep arsitektur : Vintage bogor<br>
-Harga jual : Rp 4.000.000.000,-(nego)<br>
-Pemilik: firstian`,
+        {
+            name: `LT : 2170m2<br>Desa : Pasir angin Megamendung-bogor<br>SHM | Vintage bogor<br>Harga : Rp 4.000.000.000,-(nego)`,
             coords: [-6.646974, 106.880995],
             ytId: "Pe0kIs5fAMQ"
         },
-
         {
-            name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Serua, Bojongsari, Depok<br>Harga: Rp800.000.000 (Nego)`,
+            name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Depok<br>Harga: Rp800.000.000 (Nego)`,
             coords: [-6.364704, 106.732347],
             ytId: "lKZUWHO2gbE"
         },
@@ -235,42 +223,12 @@ Pemilik: firstian`,
             ytId: "-AEYUZ-8aM4"
         },
         {
-            name: `LT: 200m2 - lb164m2<br>Jagakarsa - jakarta selatan<br>harga jual Rp2.500.000.000,-(nego)`,
-            coords: [-6.323768, 106.812401],
-            ytId: "eg5pMXkgFV4"
-        },
-        {
-            name: `LT : 203m2 - lb180m2<br>kel.grogol kec.limo kota-depok<br>harga jual Rp2.000.000.000,-(nego)`,
-            coords: [-6.379593, 106.780578], 
-            ytId: "9SPs1PHw7Js"
-        },
-        {
-            name: `LT : 189m2 - lb145m2<br>sukamaju baru - tapos - depok<br>harga jual : 2.000.000.000(nego)`,
-            coords: [-6.404723, 106.870182], 
-            ytId: "8s8YxgiPyxM"
-        },
-        {
-            name: `LT : 420m2 - lb400m2<br>Ciganjur - Jagakarsa - jaksel<br>harga jual total Rp4.500.000.000,-(nego)`,
+            name: `LT : 420m2 - lb400m2<br>Ciganjur - Jagakarsa - jaksel<br>Harga: Rp4.500.000.000,-(nego)`,
             coords: [-6.339767, 106.806890], 
             ytId: "jcAshT7-7QU"
         },
         {
-            name: `LT : 296m2-lb200m2<br>pamulang barat-tanggerang selatan<br>harga jual Rp3.200.000.000,-`,
-            coords: [-6.339291, 106.727947], 
-            ytId: "FypVuAPrnqE"
-        },
-        {
-            name: `LT : 660m2 - lb120m2<br>kel. Kukusan kec. Beji-depok<br>harga jual Rp5.500.000.000,-(nego)`,
-            coords: [-6.357698, 106.816113], 
-            ytId: "8L1HXULny0I"
-        },
-        {
-            name: `LT : 220m2 - lb180m2<br>mampang - pancoran mas depok<br>harga jual 2.000.000.000,-(nego)`,
-            coords: [-6.387974, 106.788940], 
-            ytId: "EdphwwG7A-8"
-        },
-        {
-            name: `LT : 94m2 - lb120m2<br>Kebon jeruk - Jakarta barat<br>Harga jual : Rp 2.000.000.000,-(nego)`,
+            name: `LT : 94m2 - lb120m2<br>Kebon jeruk - Jakarta barat<br>Harga: Rp 2.000.000.000,-(nego)`,
             coords: [-6.214339, 106.768035], 
             ytId: "jLs8IaosiWc"
         }
@@ -278,6 +236,7 @@ Pemilik: firstian`,
 
     let activeIndex = null;
 
+    // 3. Render List
     function renderList() {
         const container = document.getElementById('propertyList');
         container.innerHTML = '';
@@ -307,6 +266,7 @@ Pemilik: firstian`,
         });
     }
 
+    // 4. Fungsi Fokus Target & Animasi
     function focusTarget(lat, lng, index) {
         viewer.entities.removeAll(); 
         activeIndex = index;
@@ -317,7 +277,6 @@ Pemilik: firstian`,
             activeCard.classList.add('active');
             activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             
-            // Auto-play video saat di-fokus
             const iframe = activeCard.querySelector('iframe');
             const videoId = manualProperties[index].ytId;
             iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
@@ -325,50 +284,43 @@ Pemilik: firstian`,
 
         const destination = Cesium.Cartesian3.fromDegrees(lng, lat);
 
-        // FITUR INTEGRASI: Garis penghubung dinamis dari Sidebar ke Peta
+        // Garis Penghubung 3D
         viewer.entities.add({
             polyline: {
                 positions: new Cesium.CallbackProperty(() => {
-                    if (activeIndex === null) return [destination, destination];
-                    const el = document.getElementById(`card-${activeIndex}`);
-                    if (!el) return [destination, destination];
-                    
-                    const rect = el.getBoundingClientRect();
-                    // Titik tengah kiri dari kartu di sidebar
+                    const cardElem = document.getElementById(`card-${activeIndex}`);
+                    if(!cardElem) return [destination, destination];
+                    const rect = cardElem.getBoundingClientRect();
                     const screenPos = new Cesium.Cartesian2(rect.left, rect.top + (rect.height / 2));
                     const ray = viewer.camera.getPickRay(screenPos);
                     const startPos = viewer.scene.globe.pick(ray, viewer.scene) || viewer.camera.position;
-                    
                     return [startPos, destination];
                 }, false),
                 width: 2,
-                material: Cesium.Color.RED,
-                depthFailMaterial: Cesium.Color.RED.withAlpha(0.5)
+                material: Cesium.Color.RED.withAlpha(0.6)
             }
         });
 
-        // Animasi Crosshair / Target
-        const blinkingScale = new Cesium.CallbackProperty((time) => {
-            const seconds = Cesium.JulianDate.secondsDifference(time, Cesium.JulianDate.now());
-            return 0.8 + Math.abs(Math.sin(seconds * 5.0)) * 0.3;
-        }, false);
-
-        const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="4"/><path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="4"/><path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="4"/><path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="4"/><circle cx="50" cy="50" r="15" fill="none" stroke="#ff3b3b" stroke-width="2" /><circle cx="50" cy="50" r="5" fill="#ff3b3b" /></svg>`;
+        // Marker Tactical Crosshair
+        const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="6"/><path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="6"/><circle cx="50" cy="50" r="12" fill="none" stroke="#ff3b3b" stroke-width="3" /><circle cx="50" cy="50" r="5" fill="#ff3b3b" /></svg>`;
 
         viewer.entities.add({
             position: destination,
             billboard: {
                 image: 'data:image/svg+xml;base64,' + btoa(targetSvg),
-                scale: blinkingScale,
+                scale: new Cesium.CallbackProperty((time) => {
+                    const sec = Cesium.JulianDate.secondsDifference(time, Cesium.JulianDate.now());
+                    return 0.8 + Math.abs(Math.sin(sec * 4)) * 0.4; 
+                }, false),
                 verticalOrigin: Cesium.VerticalOrigin.CENTER,
                 heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND 
             }
         });
 
         viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(lng, lat, 400),
+            destination: Cesium.Cartesian3.fromDegrees(lng, lat, 500),
             orientation: { pitch: Cesium.Math.toRadians(-35.0), heading: 0.0 },
-            duration: 2
+            duration: 2.5
         });
     }
 
