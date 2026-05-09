@@ -66,10 +66,9 @@
             margin-bottom: 15px;
         }
 
-       
-        .polda-name { font-size: 22px; font-weight: 900; letter-spacing: 1px; }
-        .target-tag { color: var(--primary-red); font-weight: 900; font-size: 22px; text-shadow: 0 0 10px var(--accent-glow); }
-
+        .header .unit-name { font-size: 9px; opacity: 0.7; display: block; letter-spacing: 2px; margin-bottom: 4px; }
+        .header .polda-name { font-size: 24px; font-weight: 900; display: block; color: var(--text-main); }
+        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 28px; text-shadow: 0 0 10px var(--accent-glow); }
 
         .scroll-container { 
             flex: 1; 
@@ -150,7 +149,7 @@
     </div>
 
     <div class="sidebar">
-           <div class="header">
+        <div class="header">
             <img src="https://lh3.googleusercontent.com/u/0/d/1Mxur-oyaguVd2tdyrFfa4sSWGw4PFFuF" class="polri-logo" alt="Logo">
             <div class="title-wrapper">
                 <span class="polda-name">firstian</span>
@@ -176,96 +175,28 @@
     });
 
     const manualProperties = [
-           {
-            name: `LT: 550m2 - LB: 200m2 (2 Lantai)<br>Jl. Raya Madrasah No.5, Cilandak Timur<br>SHM | Harga: 16.5M (Nego)<br>Pemilik: firstian`,
+        {
+            name: `LT: 550m2 - LB: 200m2 (2 Lantai)<br>Jl. Raya Madrasah No.5, Cilandak Timur<br>SHM | Harga: 16.5M`,
             coords: [-6.279543, 106.817916],
             ytId: "Smv_TT3FIdg"
         },
         {
-            name: `LT: 257m2 - LB: 450m2 (2 Lantai)<br>Jl. Pondok Jaya 7 No.6B, Pela Mampang<br>SHM | Harga: 5.6M (Nego)<br>Pemilik: firstian`,
+            name: `LT: 257m2 - LB: 450m2 (2 Lantai)<br>Jl. Pondok Jaya 7 No.6B, Pela Mampang<br>SHM | Harga: 5.6M`,
             coords: [-6.249918, 106.822152],
             ytId: "sMykOCM9C7E"
         },
-     {
-            name: `LT : 2636m2<br>
-Jalan H.Saleh Rt/rw : 002/002<br>
-Kelurahan :  Benda baru Kecamatan : Pamulang<br>
-Kota : Tanggerang selatan<br>
-Kepemilikan : Sertifikat hak milik<br>
-Perijinan : IMB<br>
-Konsep Landscape : Pertandingan memancing<br>
-Harga jual : Rp6.600.000.000<br>
-Pemilik: firstian`,
-            coords: [-6.339448060744899, 106.72121687314915],
+        {
+            name: `LT: 2636m2 - Kolam Pancing<br>Benda Baru, Pamulang, Tangsel<br>SHM | Harga: 6.6M`,
+            coords: [-6.339448, 106.721216],
             ytId: "c4LvtHmeerk"
         },
-     {
-            name: `LT : 2170m2
-Jalan pasir angin Rt/rw : 002/05<br>
-Desa : Pasir angin Megamendung-bogor<br>
-Kepemilikan : Sertifikat hak milik<br>
-Perijinan : IMB<br>
-Konsep arsitektur : Vintage bogor<br>
-Harga jual : Rp 4.000.000.000,-(nego)<br>
-Pemilik: firstian`,
+        {
+            name: `LT: 2170m2 - Vintage Bogor<br>Pasir Angin, Megamendung<br>SHM | Harga: 4M`,
             coords: [-6.646974, 106.880995],
             ytId: "Pe0kIs5fAMQ"
-        },
-
-        {
-            name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Serua, Bojongsari, Depok<br>Harga: Rp800.000.000 (Nego)`,
-            coords: [-6.364704, 106.732347],
-            ytId: "lKZUWHO2gbE"
-        },
-        {
-            name: `LT: 144m2 - LB: 80m2<br>Permata Green Cinere, Limo, Depok<br>Harga: Rp2.500.000.000 (Nego)`,
-            coords: [-6.373142, 106.770910],
-            ytId: "-AEYUZ-8aM4"
-        },
-        {
-            name: `LT: 200m2 - lb164m2<br>Jagakarsa - jakarta selatan<br>harga jual Rp2.500.000.000,-(nego)`,
-            coords: [-6.323768, 106.812401],
-            ytId: "eg5pMXkgFV4"
-        },
-        {
-            name: `LT : 203m2 - lb180m2<br>kel.grogol kec.limo kota-depok<br>harga jual Rp2.000.000.000,-(nego)`,
-            coords: [-6.379593, 106.780578], 
-            ytId: "9SPs1PHw7Js"
-        },
-        {
-            name: `LT : 189m2 - lb145m2<br>sukamaju baru - tapos - depok<br>harga jual : 2.000.000.000(nego)`,
-            coords: [-6.404723, 106.870182], 
-            ytId: "8s8YxgiPyxM"
-        },
-        {
-            name: `LT : 420m2 - lb400m2<br>Ciganjur - Jagakarsa - jaksel<br>harga jual total Rp4.500.000.000,-(nego)`,
-            coords: [-6.339767, 106.806890], 
-            ytId: "jcAshT7-7QU"
-        },
-        {
-            name: `LT : 296m2-lb200m2<br>pamulang barat-tanggerang selatan<br>harga jual Rp3.200.000.000,-`,
-            coords: [-6.339291, 106.727947], 
-            ytId: "FypVuAPrnqE"
-        },
-        {
-            name: `LT : 660m2 - lb120m2<br>kel. Kukusan kec. Beji-depok<br>harga jual Rp5.500.000.000,-(nego)`,
-            coords: [-6.357698, 106.816113], 
-            ytId: "8L1HXULny0I"
-        },
-        {
-            name: `LT : 220m2 - lb180m2<br>mampang - pancoran mas depok<br>harga jual 2.000.000.000,-(nego)`,
-            coords: [-6.387974, 106.788940], 
-            ytId: "EdphwwG7A-8"
-        },
-        {
-            name: `LT : 94m2 - lb120m2<br>Kebon jeruk - Jakarta barat<br>Harga jual : Rp 2.000.000.000,-(nego)`,
-            coords: [-6.214339, 106.768035], 
-            ytId: "jLs8IaosiWc"
         }
     ];
-  
-  
-  
+
     let activeIndex = null;
 
     // 3. Render Daftar Target ke Sidebar
