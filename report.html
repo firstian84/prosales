@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TARGET OPERASI POLRI</title>
     
     <!-- CesiumJS Resources -->
@@ -12,17 +12,18 @@
     <style>
         :root {
             --primary-red: #ff3b3b;
-            --ui-bg: rgba(0, 0, 0, 0.85); 
-            --card-bg: rgba(255, 255, 255, 0.05); 
+            --ui-bg: rgba(0, 0, 0, 0.9); 
+            --card-bg: rgba(255, 255, 255, 0.07); 
             --accent-glow: #ff0000;
             --text-main: #ffffff;
             --text-sub: rgba(255, 255, 255, 0.6);
             --gmaps-blue: #4285F4;
+            --wa-green: #25D366;
         }
 
         body, html { 
             margin: 0; padding: 0; height: 100%; overflow: hidden; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             background: #000; color: white; 
         }
         
@@ -30,25 +31,18 @@
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; 
         }
 
-        .title-wrapper {
-            display: flex;
-            align-items: baseline;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        /* Instructions Overlay */
+        /* Tampilan Instruksi - Diperkecil untuk Mobile */
         .map-instruction {
-            position: absolute; top: 15px; right: 430px; z-index: 20;
+            position: absolute; top: 10px; left: 10px; z-index: 20;
             display: flex; align-items: center; pointer-events: none;
             animation: pulse-glow 2s infinite;
         }
 
         .instruction-text {
-            background: var(--primary-red); color: white; padding: 8px 15px;
-            border-radius: 4px; font-size: 11px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 0 15px var(--accent-glow);
+            background: var(--primary-red); color: white; padding: 6px 12px;
+            border-radius: 4px; font-size: 9px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            box-shadow: 0 0 10px var(--accent-glow);
         }
 
         /* Sidebar UI */
@@ -57,28 +51,29 @@
             background: var(--ui-bg); display: flex; flex-direction: column;
             border-left: 1px solid rgba(255, 255, 255, 0.1); z-index: 10; 
             box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+            transition: all 0.3s ease;
         }
 
         .header { 
-            padding: 20px; 
+            padding: 15px; 
             border-bottom: 1px solid rgba(255,255,255,0.1); 
             text-align: center; 
             flex-shrink: 0;
         }
 
         .polri-logo {
-            width: 120px;
+            width: 80px;
             height: auto;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        .header .polda-name { font-size: 20px; font-weight: 900; color: var(--text-main);  }
-        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 20px; text-shadow: 0 0 10px var(--accent-glow); }
+        .header .polda-name { font-size: 18px; font-weight: 900; color: var(--text-main); }
+        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 18px; text-shadow: 0 0 10px var(--accent-glow); }
 
         .scroll-container { 
             flex: 1; 
             overflow-y: auto; 
-            padding: 15px;
+            padding: 12px;
             -webkit-overflow-scrolling: touch;
         }
         
@@ -87,36 +82,36 @@
 
         /* Card Style */
         .property-card {
-            background: var(--card-bg); border-radius: 8px; margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; transition: 0.4s;
+            background: var(--card-bg); border-radius: 8px; margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; transition: 0.3s;
         }
 
         .property-card.active { 
             border-color: var(--primary-red); 
             background: rgba(255, 59, 59, 0.15);
-            transform: scale(1.02);
         }
 
         .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
-        .card-content { padding: 15px; }
-        .card-content h3 { margin: 0 0 10px 0; font-size: 13px; line-height: 1.5; color: var(--text-main); font-weight: 500; }
-        .coords-label { color: var(--text-sub); font-size: 10px; font-family: monospace; display: block; margin-bottom: 15px; }
+        .card-content { padding: 12px; }
+        .card-content h3 { margin: 0 0 8px 0; font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 500; }
+        .coords-label { color: var(--text-sub); font-size: 9px; font-family: monospace; display: block; margin-bottom: 12px; }
+
+        .btn-group { display: flex; gap: 6px; flex-wrap: wrap; }
 
         .btn { 
             flex: 1; border: none; border-radius: 4px; cursor: pointer; 
-            font-weight: 700; padding: 10px; font-size: 10px; 
+            font-weight: 700; padding: 10px 5px; font-size: 10px; 
             transition: 0.3s; text-decoration: none; text-align: center;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
             text-transform: uppercase; color: white;
+            min-width: 80px;
         }
         
         .btn-track { background: var(--primary-red); }
-        .btn-track:hover { background: #ff0000; box-shadow: 0 0 10px var(--accent-glow); }
         .btn-maps { background: var(--gmaps-blue); }
-       .btn-wa { background: var(--wa-green); }
-        .btn-wa svg { fill: white; width: 14px; height: 14px; }
+        .btn-wa { background: var(--wa-green); }
 
         @keyframes pulse-glow {
             0% { opacity: 0.7; }
@@ -124,15 +119,40 @@
             100% { opacity: 0.7; }
         }
 
-        /* Hide Cesium credits for clean UI */
+        /* Hapus elemen Cesium yang mengganggu */
         .cesium-viewer-bottom { display: none !important; }
-        .cesium-viewer-toolbar { right: 390px !important; }
 
+        /* --- PERBAIKAN KHUSUS ANDROID/MOBILE --- */
         @media (max-width: 768px) {
-            #cesiumContainer { height: 40%; }
-            .sidebar { position: relative; width: 100%; height: 60%; border-left: none; border-top: 2px solid var(--primary-red); }
-            .cesium-viewer-toolbar { right: 10px !important; }
-            .map-instruction { right: 10px; top: 50px; }
+            #cesiumContainer { height: 45%; }
+            
+            .sidebar { 
+                position: absolute; 
+                bottom: 0; 
+                top: auto;
+                left: 0;
+                width: 100%; 
+                height: 55%; 
+                border-left: none; 
+                border-top: 3px solid var(--primary-red);
+                border-radius: 15px 15px 0 0;
+            }
+
+            .header { padding: 10px; }
+            .polri-logo { width: 60px; }
+            
+            /* Posisi tombol tool Cesium agar tidak tertutup instruksi */
+            .cesium-viewer-toolbar { 
+                top: 5px !important; 
+                right: 5px !important; 
+            }
+
+            .map-instruction {
+                top: 45px;
+                left: 5px;
+            }
+
+            .btn { padding: 12px 5px; font-size: 9px; }
         }
     </style>
 </head>
@@ -141,11 +161,10 @@
     <div id="cesiumContainer"></div>
 
     <div class="map-instruction">
-        <div class="instruction-text">GANTI BASEMAP > OTHER > ARCGIS WORLD IMAGERY</div>
+        <div class="instruction-text">BASEMAP > OTHER > ARCGIS IMAGERY</div>
     </div>
 
     <div class="sidebar">
-        <!-- Header Section -->
         <div class="header">
             <img src="https://lh3.googleusercontent.com/u/0/d/1Mxur-oyaguVd2tdyrFfa4sSWGw4PFFuF" alt="POLRI" class="polri-logo">
             <div class="title-wrapper">
@@ -153,8 +172,6 @@
                 <span class="target-tag">PROSALES</span>
             </div>
         </div>
-        
-        <!-- Scrollable List Section -->
         <div id="propertyList" class="scroll-container"></div>
     </div>
 
@@ -173,7 +190,7 @@
     });
 
     const manualProperties = [
-              {
+        {
             name: `LT: 550m2 - LB: 200m2 (2 Lantai)<br>Jl. Raya Madrasah No.5, Cilandak Timur<br>SHM | Harga: 16.5M (Nego)<br>Pemilik: firstian`,
             coords: [-6.279543, 106.817916],
             ytId: "Smv_TT3FIdg"
@@ -183,34 +200,18 @@
             coords: [-6.249918, 106.822152],
             ytId: "sMykOCM9C7E"
         },
-     {
-            name: `LT : 2636m2<br>
-Jalan H.Saleh Rt/rw : 002/002<br>
-Kelurahan :  Benda baru Kecamatan : Pamulang<br>
-Kota : Tanggerang selatan<br>
-Kepemilikan : Sertifikat hak milik<br>
-Perijinan : IMB<br>
-Konsep Landscape : Pertandingan memancing<br>
-Harga jual : Rp6.600.000.000<br>
-Pemilik: firstian`,
+        {
+            name: `LT : 2636m2<br>Jalan H.Saleh Rt/rw : 002/002<br>Kelurahan : Benda baru Kecamatan : Pamulang<br>Kota : Tanggerang selatan<br>Kepemilikan : SHM | IMB<br>Harga: Rp6.600.000.000`,
             coords: [-6.339448060744899, 106.72121687314915],
             ytId: "c4LvtHmeerk"
         },
-     {
-            name: `LT : 2170m2
-Jalan pasir angin Rt/rw : 002/05<br>
-Desa : Pasir angin Megamendung-bogor<br>
-Kepemilikan : Sertifikat hak milik<br>
-Perijinan : IMB<br>
-Konsep arsitektur : Vintage bogor<br>
-Harga jual : Rp 4.000.000.000,-(nego)<br>
-Pemilik: firstian`,
+        {
+            name: `LT : 2170m2<br>Jalan pasir angin, Megamendung-bogor<br>SHM | IMB | Vintage bogor<br>Harga: Rp 4.000.000.000 (Nego)`,
             coords: [-6.646974, 106.880995],
             ytId: "Pe0kIs5fAMQ"
         },
-
         {
-            name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Serua, Bojongsari, Depok<br>Harga: Rp800.000.000 (Nego)`,
+            name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Depok<br>Harga: Rp800.000.000 (Nego)`,
             coords: [-6.364704, 106.732347],
             ytId: "lKZUWHO2gbE"
         },
@@ -220,92 +221,87 @@ Pemilik: firstian`,
             ytId: "-AEYUZ-8aM4"
         },
         {
-            name: `LT: 200m2 - lb164m2<br>Jagakarsa - jakarta selatan<br>harga jual Rp2.500.000.000,-(nego)`,
+            name: `LT: 200m2 - lb164m2<br>Jagakarsa - jakarta selatan<br>Harga: Rp2.500.000.000 (Nego)`,
             coords: [-6.323768, 106.812401],
             ytId: "eg5pMXkgFV4"
         },
         {
-            name: `LT : 203m2 - lb180m2<br>kel.grogol kec.limo kota-depok<br>harga jual Rp2.000.000.000,-(nego)`,
+            name: `LT : 203m2 - lb180m2<br>Kel. Grogol, Limo, Depok<br>Harga: Rp2.000.000.000 (Nego)`,
             coords: [-6.379593, 106.780578], 
             ytId: "9SPs1PHw7Js"
         },
         {
-            name: `LT : 189m2 - lb145m2<br>sukamaju baru - tapos - depok<br>harga jual : 2.000.000.000(nego)`,
+            name: `LT : 189m2 - lb145m2<br>Sukamaju Baru, Tapos, Depok<br>Harga: 2.000.000.000 (Nego)`,
             coords: [-6.404723, 106.870182], 
             ytId: "8s8YxgiPyxM"
         },
         {
-            name: `LT : 420m2 - lb400m2<br>Ciganjur - Jagakarsa - jaksel<br>harga jual total Rp4.500.000.000,-(nego)`,
+            name: `LT : 420m2 - lb400m2<br>Ciganjur, Jaksel<br>Harga: Rp4.500.000.000 (Nego)`,
             coords: [-6.339767, 106.806890], 
             ytId: "jcAshT7-7QU"
         },
         {
-            name: `LT : 296m2-lb200m2<br>pamulang barat-tanggerang selatan<br>harga jual Rp3.200.000.000,-`,
+            name: `LT : 296m2 - lb200m2<br>Pamulang Barat, Tangsel<br>Harga: Rp3.200.000.000`,
             coords: [-6.339291, 106.727947], 
             ytId: "FypVuAPrnqE"
         },
         {
-            name: `LT : 660m2 - lb120m2<br>kel. Kukusan kec. Beji-depok<br>harga jual Rp5.500.000.000,-(nego)`,
+            name: `LT : 660m2 - lb120m2<br>Kukusan, Beji, Depok<br>Harga: Rp5.500.000.000 (Nego)`,
             coords: [-6.357698, 106.816113], 
             ytId: "8L1HXULny0I"
         },
         {
-            name: `LT : 220m2 - lb180m2<br>mampang - pancoran mas depok<br>harga jual 2.000.000.000,-(nego)`,
+            name: `LT : 220m2 - lb180m2<br>Mampang, Pancoran Mas, Depok<br>Harga: 2.000.000.000 (Nego)`,
             coords: [-6.387974, 106.788940], 
             ytId: "EdphwwG7A-8"
         },
         {
-            name: `LT : 94m2 - lb120m2<br>Kebon jeruk - Jakarta barat<br>Harga jual : Rp 2.000.000.000,-(nego)`,
+            name: `LT : 94m2 - lb120m2<br>Kebon Jeruk, Jakarta Barat<br>Harga: Rp 2.000.000.000 (Nego)`,
             coords: [-6.214339, 106.768035], 
             ytId: "jLs8IaosiWc"
         }
     ];
 
-    let activeIndex = null;
-function renderList() {
-    const container = document.getElementById('propertyList');
-    container.innerHTML = '';
+    function renderList() {
+        const container = document.getElementById('propertyList');
+        container.innerHTML = '';
 
-    manualProperties.forEach((prop, index) => {
-        // 1. Prepare the clean name and WhatsApp URL
-        const cleanName = prop.name.replace(/<br>/g, ' ');
-        const waUrl = `https://wa.me/6287796126529?text=Halo%20Firstian,%20saya%20tertarik%20dengan%20properti%20ini:%20${encodeURIComponent(cleanName)}`;
+        manualProperties.forEach((prop, index) => {
+            const cleanName = prop.name.replace(/<br>/g, ' ');
+            const waUrl = `https://wa.me/6287796126529?text=Halo%20Firstian,%20saya%20tertarik%20dengan%20properti%20ini:%20${encodeURIComponent(cleanName)}`;
 
-        // 2. Create the card element
-        const card = document.createElement('div');
-        card.className = 'property-card';
-        card.id = `card-${index}`;
+            const card = document.createElement('div');
+            card.className = 'property-card';
+            card.id = `card-${index}`;
 
-        // 3. Build the inner HTML (now including the WhatsApp button)
-        card.innerHTML = `
-            <div class="video-wrapper">
-                <iframe src="https://www.youtube.com/embed/${prop.ytId}?autoplay=0&mute=1" allowfullscreen></iframe>
-            </div>
-            <div class="card-content">
-                <h3>${prop.name}</h3>
-                <span class="coords-label">COORDS: ${prop.coords[0].toFixed(6)}, ${prop.coords[1].toFixed(6)}</span>
-                <div style="display:flex; gap:8px; flex-wrap: wrap;">
-                    <button class="btn btn-track" onclick="focusTarget(${prop.coords[0]}, ${prop.coords[1]}, ${index})">POSISI</button>
-                    <a href="https://www.google.com/maps?q=${prop.coords[0]},${prop.coords[1]}" target="_blank" class="btn btn-maps">LOKASI</a>
-                    <a href="${waUrl}" target="_blank" class="btn btn-wa" style="background-color: #25D366; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; display: flex; align-items: center;">HUBUNGI</a>
+            card.innerHTML = `
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/${prop.ytId}?autoplay=0&mute=1" allowfullscreen></iframe>
                 </div>
-            </div>`;
-
-        container.appendChild(card);
-    });
-}
+                <div class="card-content">
+                    <h3>${prop.name}</h3>
+                    <span class="coords-label">COORDS: ${prop.coords[0].toFixed(6)}, ${prop.coords[1].toFixed(6)}</span>
+                    <div class="btn-group">
+                        <button class="btn btn-track" onclick="focusTarget(${prop.coords[0]}, ${prop.coords[1]}, ${index})">POSISI</button>
+                        <a href="https://www.google.com/maps?q=${prop.coords[0]},${prop.coords[1]}" target="_blank" class="btn btn-maps">LOKASI</a>
+                        <a href="${waUrl}" target="_blank" class="btn btn-wa">HUBUNGI</a>
+                    </div>
+                </div>`;
+            container.appendChild(card);
+        });
+    }
 
     function focusTarget(lat, lng, index) {
         viewer.entities.removeAll(); 
-        activeIndex = index;
         
         document.querySelectorAll('.property-card').forEach(c => c.classList.remove('active'));
         const activeCard = document.getElementById(`card-${index}`);
-        activeCard.classList.add('active');
+        if(activeCard) {
+            activeCard.classList.add('active');
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
 
         const destination = Cesium.Cartesian3.fromDegrees(lng, lat);
-
-        // Crosshair Marker
         const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
             <path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="6"/>
             <path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="6"/>
@@ -319,20 +315,20 @@ function renderList() {
             position: destination,
             billboard: {
                 image: 'data:image/svg+xml;base64,' + btoa(targetSvg),
-                scale: 1.0,
+                scale: 0.8,
                 verticalOrigin: Cesium.VerticalOrigin.CENTER
             }
         });
 
         viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(lng, lat, 500),
+            destination: Cesium.Cartesian3.fromDegrees(lng, lat, 400),
             orientation: { pitch: Cesium.Math.toRadians(-35.0), heading: 0.0 },
             duration: 2
         });
     }
 
     renderList();
-    viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(106.82, -6.17, 20000) });
+    viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(106.82, -6.17, 15000) });
 </script>
 </body>
 </html>
