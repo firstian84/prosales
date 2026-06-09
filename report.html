@@ -204,7 +204,7 @@
             <span class="target-tag">TARGET OPERASI</span>
         </div>
 
-
+     
         <div id="propertyList" class="scroll-container"></div>
     </div>
 
@@ -224,8 +224,7 @@
     });
 
     // 2. Database Target (Manual)
-   
-    const manualProperties = [
+   const manualProperties = [
         {
             name: `LT: 550m2 - LB: 200m2 (2 Lantai)<br>Jl. Raya Madrasah No.5, Cilandak Timur<br>SHM | Harga: 16.5M`,
             coords: [-6.279543, 106.817916],
@@ -297,6 +296,7 @@
             ytId: "jLs8IaosiWc"
         }
     ];
+
     let activeIndex = null;
 
     // 3. Render Daftar Target ke Sidebar
@@ -325,7 +325,6 @@
     }
 
    
-
     // 4. Fungsi Navigasi Kamera & Marker 3D
     function focusTarget(lat, lng, index) {
         viewer.entities.removeAll(); 
