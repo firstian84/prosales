@@ -14,7 +14,7 @@
             --ui-bg: rgba(15, 15, 15, 0.5); 
             --card-bg: rgba(255, 255, 255, 0.05); 
             --accent-glow: #ff0000;
-            --text-main: rgba(255, 255, 255, 0.8);
+            --text-main: rgba(255, 255, 255, 0.5);
             --text-sub: rgba(255, 255, 255, 0.5);
             --wa-green: #25D366;
             --gmaps-blue: #4285F4;
@@ -39,11 +39,11 @@
         .map-instruction {
             position: absolute;
             top: 15px;
-            right: 440px; 
+            right: 440px; /* Posisi di sebelah kiri toolbar */
             z-index: 20;
             display: flex;
             align-items: center;
-            pointer-events: none; 
+            pointer-events: none; /* Agar tidak menghalangi klik pada peta */
             animation: pulse-glow 2s infinite;
         }
 
@@ -75,7 +75,16 @@
             100% { opacity: 0.6; transform: translateX(0); }
         }
 
-        /* --- SIDEBAR & ANALYSIS STYLE --- */
+        /* Penyesuaian Mobile untuk Notifikasi */
+        @media (max-width: 768px) {
+            .map-instruction {
+                right: 60px;
+                top: 50px;
+            }
+            .instruction-text { font-size: 10px; padding: 5px 10px; }
+        }
+        /* ----------------------- */
+
         .sidebar { 
             position: absolute; 
             right: 0; 
@@ -89,48 +98,29 @@
             z-index: 10; 
             box-shadow: -10px 0 30px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
         }
 
-        .analysis-box {
-            padding: 15px;
-            background: rgba(255, 59, 59, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        @media (max-width: 768px) {
+            #cesiumContainer {
+                height: 45%; 
+                position: relative;
+            }
 
-        .analysis-title {
-            font-size: 10px;
-            color: var(--primary-red);
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: 55%; 
+                border-left: none;
+                border-top: 2px solid var(--primary-red);
+            }
 
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
+            .cesium-viewer-toolbar {
+                right: 10px !important; 
+            }
 
-        .analysis-card {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 8px;
-            border-radius: 4px;
-            border-left: 2px solid var(--primary-red);
-        }
-
-        .analysis-card small {
-            display: block;
-            font-size: 8px;
-            color: var(--text-sub);
-            text-transform: uppercase;
-        }
-
-        .analysis-card span {
-            font-size: 11px;
-            font-weight: 600;
-            color: white;
+            .header {
+                padding: 15px;
+            }
         }
 
         .header { 
@@ -209,34 +199,31 @@
             white-space: nowrap; 
         }
         
-        .btn-go { background: var(--primary-red); color: white; }
+        .btn-go { 
+            background: var(--primary-red); 
+            color: white; 
+        }
         .btn-go:hover { background: #ff5c5c; box-shadow: 0 0 15px var(--accent-glow); }
         .btn-go svg { fill: white; width: 14px; height: 14px; }
 
-        .btn-maps { background: var(--gmaps-blue); color: white; }
+        .btn-maps { 
+            background: var(--gmaps-blue); 
+            color: white; 
+        }
         .btn-maps:hover { background: #357ae8; box-shadow: 0 0 15px rgba(66, 133, 244, 0.4); }
         .btn-maps svg { fill: white; width: 14px; height: 14px; }
 
-        .btn-wa { background: var(--wa-green); color: white; }
-        .btn-wa:hover { background: #20ba5a; box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
+        .btn-wa { 
+            background: var(--wa-green); 
+            color: white; 
+        }
+        .btn-wa:hover { 
+            background: #20ba5a; 
+            box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); 
+        }
         .btn-wa svg { fill: white; width: 14px; height: 14px; }
         
         .cesium-viewer-bottom { display: none !important; }
-
-         @media (max-width: 768px) {
-              body, html { overflow: auto !important; }
-            #cesiumContainer { height: 50%; width: 100%; position: relative; }
-            .sidebar {
-                position: relative; width: 100%; height: auto; border-left: none;
-                border-top: 2px solid var(--primary-red); background: rgba(5,5,5,0.9);
-            }
-               .cesium-viewer-toolbar { right: 0px !important; }
-            .map-instruction { right: 40px; top: 13px; }
-        }
-        .cesium-viewer-bottom { display: none !important; 
-      }
-        
-    </style>
     </style>
 </head>
 <body>
@@ -252,7 +239,6 @@
         <div class="header">
             <h2>firstian<span>PROSALES</span></h2>
         </div>
-        <div id="analysisContent" class="analysis-box"></div>
         <div id="propertyList" class="scroll-container"></div>
     </div>
 
@@ -281,16 +267,32 @@
             coords: [-6.249918, 106.822152],
             ytId: "sMykOCM9C7E"
         },
-        {
-            name: `LT : 2636m2<br>Jalan H.Saleh Rt/rw : 002/002<br>Kelurahan : Benda baru Kecamatan : Pamulang<br>Kota : Tanggerang selatan<br>Kepemilikan : Sertifikat hak milik<br>Perijinan : IMB<br>Konsep Landscape : Pertandingan memancing<br>Harga jual : Rp6.600.000.000<br>Pemilik: firstian`,
-            coords: [-6.339448, 106.721216],
+     {
+            name: `LT : 2636m2<br>
+Jalan H.Saleh Rt/rw : 002/002<br>
+Kelurahan :  Benda baru Kecamatan : Pamulang<br>
+Kota : Tanggerang selatan<br>
+Kepemilikan : Sertifikat hak milik<br>
+Perijinan : IMB<br>
+Konsep Landscape : Pertandingan memancing<br>
+Harga jual : Rp6.600.000.000<br>
+Pemilik: firstian`,
+            coords: [-6.339448060744899, 106.72121687314915],
             ytId: "c4LvtHmeerk"
         },
-        {
-            name: `LT : 2170m2<br>Jalan pasir angin Rt/rw : 002/05<br>Desa : Pasir angin Megamendung-bogor<br>Kepemilikan : Sertifikat hak milik<br>Perijinan : IMB<br>Konsep arsitektur : Vintage bogor<br>Harga jual : Rp 4.000.000.000,-(nego)<br>Pemilik: firstian`,
+     {
+            name: `LT : 2170m2
+Jalan pasir angin Rt/rw : 002/05<br>
+Desa : Pasir angin Megamendung-bogor<br>
+Kepemilikan : Sertifikat hak milik<br>
+Perijinan : IMB<br>
+Konsep arsitektur : Vintage bogor<br>
+Harga jual : Rp 4.000.000.000,-(nego)<br>
+Pemilik: firstian`,
             coords: [-6.646974, 106.880995],
             ytId: "Pe0kIs5fAMQ"
         },
+
         {
             name: `LT: 94m2 - LB: 94m2<br>Jl. H. Nawi Malik No.32, Serua, Bojongsari, Depok<br>Harga: Rp800.000.000 (Nego)`,
             coords: [-6.364704, 106.732347],
@@ -345,42 +347,6 @@
 
     let activeTrackIndex = null;
 
-    // Fungsi Analisis Data Konten
-    function updateAnalysis() {
-        const analysisContainer = document.getElementById('analysisContent');
-        const total = manualProperties.length;
-        
-        // Ekstraksi Wilayah
-        const wilayahCount = {};
-        manualProperties.forEach(p => {
-            const text = p.name.toLowerCase();
-            let loc = "Lainnya";
-            if (text.includes("jakarta selatan") || text.includes("jaksel") || text.includes("cilandak") || text.includes("jagakarsa")) loc = "Jakarta Selatan";
-            else if (text.includes("depok") || text.includes("limo") || text.includes("tapos")) loc = "Depok";
-            else if (text.includes("tanggerang selatan") || text.includes("pamulang")) loc = "Tangsel";
-            else if (text.includes("bogor")) loc = "Bogor";
-            else if (text.includes("jakarta barat")) loc = "Jakarta Barat";
-            
-            wilayahCount[loc] = (wilayahCount[loc] || 0) + 1;
-        });
-        
-        const topWilayah = Object.entries(wilayahCount).sort((a,b) => b[1] - a[1])[0][0];
-
-        analysisContainer.innerHTML = `
-            <div class="analysis-title">Content Analysis</div>
-            <div class="analysis-grid">
-                <div class="analysis-card">
-                    <small>Total Properti</small>
-                    <span>${total} Unit Terdata</span>
-                </div>
-                <div class="analysis-card">
-                    <small>Area Dominan</small>
-                    <span>${topWilayah}</span>
-                </div>
-            </div>
-        `;
-    }
-
     function renderList() {
         const container = document.getElementById('propertyList');
         container.innerHTML = '';
@@ -393,7 +359,7 @@
             const videoId = prop.ytId;
             const videoUrl = `https://www.youtube.com/embed/${videoId}?mute=1&loop=1&playlist=${videoId}`;
             const waUrl = `https://wa.me/6287796126529?text=Halo%20Firstian,%20saya%20tertarik%20dengan%20properti%20ini:%20${encodeURIComponent(prop.name.replace(/<br>/g, ' '))}`;
-            const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+            const gmapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
             
             card.innerHTML = `
                 <div class="video-wrapper">
@@ -478,8 +444,6 @@
         });
     }
 
-    // Inisialisasi
-    updateAnalysis();
     renderList();
     viewer.camera.setView({ 
         destination: Cesium.Cartesian3.fromDegrees(106.82, -6.25, 20000) 
