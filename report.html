@@ -12,104 +12,71 @@
     <style>
         :root {
             --primary-red: #ff3b3b;
-            --ui-bg: rgba(5, 5, 5, 0.4);
-            --card-bg: rgba(0, 0, 0, 0.3);
+            --ui-bg: rgba(0, 0, 0, 0.4); 
+            --card-bg: rgba(255, 255, 255, 0.05); 
             --accent-glow: #ff0000;
             --text-main: #ffffff;
-            --text-sub: rgba(255, 255, 255, 0.9);
+            --text-sub: rgba(255, 255, 255, 0.6);
             --gmaps-blue: #4285F4;
-            --gmaps-green: #34A853;
         }
-        body, html {
-            margin: 0;
-            padding: 0; height: 100%; overflow: hidden;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: #000; color: white;
-            touch-action: none;
+
+        body, html { 
+            margin: 0; padding: 0; height: 100%; overflow: hidden; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background: #000; color: white; 
         }
         
-        #cesiumContainer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
-            transition: 0.3s;
-            pointer-events: auto;
+        #cesiumContainer { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; 
         }
+
+        /* Instruksi Ganti Basemap */
         .map-instruction {
-            position: absolute;
-            top: 15px; right: 430px; z-index: 20;
+            position: absolute; top: 15px; right: 430px; z-index: 20;
             display: flex; align-items: center; pointer-events: none;
             animation: pulse-glow 2s infinite;
         }
+
         .instruction-text {
-            background: var(--primary-red);
-            color: white; padding: 8px 15px;
+            background: var(--primary-red); color: white; padding: 8px 15px;
             border-radius: 4px; font-size: 11px; font-weight: 800;
             text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 0 15px var(--accent-glow);
         }
-        .sidebar {
-            position: absolute;
-            right: 0; top: 0; width: 380px; height: 100%;
-            background: var(--ui-bg);
-            display: flex; flex-direction: column;
-            border-left: 1px solid rgba(255, 255, 255, 0.1); z-index: 10;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.3);
-            backdrop-filter: blur(0.1px);
-            -webkit-backdrop-filter: blur(0.1px);
-            pointer-events: auto;
-            touch-action: pan-y;
-        }
-        .header {
-            padding: 25px 20px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .polri-logo {
-            width: 160px;
-            height: auto;
-            margin-bottom: 8px;
-            filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.7));
-        }
-        .header .unit-name { font-size: 9px;
-            opacity: 0.9; display: block; letter-spacing: 3px; margin-bottom: 4px; text-transform: uppercase;
-            font-weight: 600;}
-        .header .polda-name { font-size: 24px; font-weight: 900; display: block; color: var(--text-main);
-        }
-        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 24px;
-            text-shadow: 0 0 10px var(--accent-glow); }
-        
-        /* SEARCH BOX CONTAINER */
-        .search-box {
-            padding: 0 15px 15px 15px;
-            flex-shrink: 0;
-        }
-        .search-box input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 10px 12px;
-            color: #fff;
-            font-size: 12px;
-            border-radius: 4px;
-            outline: none;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-        .search-box input:focus {
-            border-color: var(--primary-red);
+
+        /* Sidebar UI */
+        .sidebar { 
+            position: absolute; right: 0; top: 0; width: 380px; height: 100%;
+            background: var(--ui-bg); display: flex; flex-direction: column;
+            border-left: 1px solid rgba(255, 255, 255, 0.1); z-index: 10; 
+            box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+           
         }
 
-        .scroll-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 15px 20px 15px;
+        .header { 
+            padding: 25px 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            text-align: left; 
+            flex-shrink: 0;
+        }
+
+        .polri-logo {
+            width: 200px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .header .polda-name { font-size: 24px; font-weight: 900; display: block; color: var(--text-main); text-transform: uppercase; }
+        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 28px; text-shadow: 0 0 10px var(--accent-glow); }
+
+        .scroll-container { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 15px;
             -webkit-overflow-scrolling: touch;
-            touch-action: pan-y;
         }
-        .scroll-container::-webkit-scrollbar { width: 4px;
-        }
-        .scroll-container::-webkit-scrollbar-thumb { background: var(--primary-red);
-        }
+        .scroll-container::-webkit-scrollbar { width: 4px; }
+        .scroll-container::-webkit-scrollbar-thumb { background: var(--primary-red); }
 
         /* Card Style */
         .property-card {
@@ -156,8 +123,8 @@
         .cesium-viewer-bottom { display: none !important; }
         .cesium-viewer-toolbar { right: 390px !important; }
 
-        @media (max-width: 768px) {
-              body, html { overflow: auto !important; }
+       @media (max-width: 768px) {
+            body, html { overflow: auto !important; }
             #cesiumContainer { height: 50%; width: 100%; position: relative; }
             .sidebar {
                 position: relative; width: 100%; height: auto; border-left: none;
@@ -166,8 +133,7 @@
                .cesium-viewer-toolbar { right: 0px !important; }
             .map-instruction { right: 40px; top: 13px; }
         }
-        .cesium-viewer-bottom { display: none !important; 
-      }
+        .cesium-viewer-bottom { display: none !important; }
         
     </style>
 </head>
