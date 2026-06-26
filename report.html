@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firstian Prosales - Property Map</title>
+    <title>TARGET OPERASI</title>
     
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
@@ -11,68 +11,148 @@
     <style>
         :root {
             --primary-red: #ff3b3b;
-            --ui-bg: rgba(15, 15, 15, 0.5); 
-            --card-bg: rgba(255, 255, 255, 0.05); 
+            --ui-bg: rgba(5, 5, 5, 0.4);
+            --card-bg: rgba(0, 0, 0, 0.3);
             --accent-glow: #ff0000;
-            --text-main: rgba(255, 255, 255, 0.8);
-            --text-sub: rgba(255, 255, 255, 0.5);
-            --wa-green: #25D366;
+            --text-main: #ffffff;
+            --text-sub: rgba(255, 255, 255, 0.9);
             --gmaps-blue: #4285F4;
+            --gmaps-green: #34A853;
         }
-
-        body, html { 
-            margin: 0; padding: 0; height: 100%; overflow: hidden; 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            background: #000; color: white; 
+        body, html {
+            margin: 0;
+            padding: 0; height: 100%; overflow: hidden;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: #000; color: white;
+            touch-action: none;
         }
         
-        #cesiumContainer { 
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; 
+        #cesiumContainer {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            transition: 0.3s;
+            pointer-events: auto;
         }
-
-        .cesium-viewer-toolbar {
-            right: 390px !important; 
-            top: 10px !important;
-        }
-
-        /* --- NOTIFIKASI BARU --- */
         .map-instruction {
             position: absolute;
-            top: 15px;
-            right: 440px; 
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            pointer-events: none; 
+            top: 15px; right: 430px; z-index: 20;
+            display: flex; align-items: center; pointer-events: none;
             animation: pulse-glow 2s infinite;
         }
-
-        .polri-logo {
-            width: 100px;
-            height: auto;
-            margin-bottom: 15px;
-        }
-
         .instruction-text {
-            background: rgba(255, 59, 59, 0.8);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 4px;
+            background: var(--primary-red);
+            color: white; padding: 8px 15px;
+            border-radius: 4px; font-size: 11px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .sidebar {
+            position: absolute;
+            right: 0; top: 0; width: 380px; height: 100%;
+            background: var(--ui-bg);
+            display: flex; flex-direction: column;
+            border-left: 1px solid rgba(255, 255, 255, 0.1); z-index: 10;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+            backdrop-filter: blur(0.1px);
+            -webkit-backdrop-filter: blur(0.1px);
+            pointer-events: auto;
+            touch-action: pan-y;
+        }
+        .header {
+            padding: 25px 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .polri-logo {
+            width: 160px;
+            height: auto;
+            margin-bottom: 8px;
+            filter: drop-shadow(0px 4px 8px rgba(0,0,0,0.7));
+        }
+        .header .unit-name { font-size: 9px;
+            opacity: 0.9; display: block; letter-spacing: 3px; margin-bottom: 4px; text-transform: uppercase;
+            font-weight: 600;}
+        .header .polda-name { font-size: 24px; font-weight: 900; display: block; color: var(--text-main);
+        }
+        .header .target-tag { color: var(--primary-red); font-weight: 800; font-size: 24px;
+            text-shadow: 0 0 10px var(--accent-glow); }
+        
+        /* SEARCH BOX CONTAINER */
+        .search-box {
+            padding: 0 15px 15px 15px;
+            flex-shrink: 0;
+        }
+        .search-box input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 12px;
+            color: #fff;
             font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-            white-space: nowrap;
+            border-radius: 4px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        .search-box input:focus {
+            border-color: var(--primary-red);
         }
 
-        .instruction-arrow {
-            width: 0; 
-            height: 0; 
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 15px solid rgba(255, 59, 59, 0.8);
-            margin-left: -1px;
+        .scroll-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px 20px 15px;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+        }
+        .scroll-container::-webkit-scrollbar { width: 4px;
+        }
+        .scroll-container::-webkit-scrollbar-thumb { background: var(--primary-red);
+        }
+
+        /* CARD COMPONENT STYLES */
+        .property-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(5px);
+        }
+        .property-card:hover {
+            border-color: rgba(255, 59, 59, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .property-card.active {
+            border-color: var(--primary-red);
+            box-shadow: inset 0 0 10px rgba(255, 59, 59, 0.2), 0 0 15px rgba(255, 59, 59, 0.1);
+            background: rgba(15, 5, 5, 0.6);
+        }
+        .video-wrapper { 
+            position: relative; padding-bottom: 56.25%; height: 0; background: #000;
+            width: 100%; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 10px;
+        }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%;
+            height: 100%; border: none; }
+        
+        /* MENILAI INTEGRITAS TEKS UTAMA PADA CARD (TIDAK BOLD) */
+        .card-content h3 {
+            font-size: 12px;
+            font-weight: 400; /* Mengubah tulisan h3 menjadi tidak tebal/normal */
+            line-height: 1.6;
+            margin: 0 0 8px 0;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .coords-label {
+            display: block;
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            font-family: monospace;
+            margin-bottom: 10px;
         }
 
         @keyframes pulse-glow {
@@ -80,168 +160,32 @@
             50% { opacity: 1; transform: translateX(5px); }
             100% { opacity: 0.6; transform: translateX(0); }
         }
-
-        /* --- SIDEBAR & ANALYSIS STYLE --- */
-        .sidebar { 
-            position: absolute; 
-            right: 0; 
-            top: 0; 
-            width: 380px; 
-            height: 100%;
-            background: var(--ui-bg); 
-            display: flex; 
-            flex-direction: column;
-            border-left: 1px solid rgba(255, 255, 255, 0.1); 
-            z-index: 10; 
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-           
-            
-        }
-
-        .analysis-box {
-            padding: 15px;
-            background: rgba(255, 59, 59, 0.05);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .analysis-title {
-            font-size: 10px;
-            color: var(--primary-red);
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .analysis-card {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 8px;
-            border-radius: 4px;
-            border-left: 2px solid var(--primary-red);
-        }
-
-        .analysis-card small {
-            display: block;
-            font-size: 8px;
-            color: var(--text-sub);
-            text-transform: uppercase;
-        }
-
-        .analysis-card span {
-            font-size: 11px;
-            font-weight: 600;
-            color: white;
-        }
-
-        .header { 
-            padding: 25px 20px; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-            display: flex; justify-content: space-between; align-items: center;
-        }
         
-        .header h2 { 
-            margin: 0; font-size: 30px; letter-spacing: 1px; 
-            font-weight: 400; 
-              font-size: 25px;
-            
-        }
-        .header h2 span { 
-            color: var(--primary-red); 
-            font-weight: 800; 
-            text-shadow: 0 0 10px var(--accent-glow); 
-        }
-
-        .scroll-container { flex: 1; overflow-y: auto; padding: 15px; }
-        .scroll-container::-webkit-scrollbar { width: 4px; }
-        .scroll-container::-webkit-scrollbar-thumb { background: var(--primary-red); }
-
-        .property-card {
-            background: var(--card-bg); border-radius: 12px; margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; transition: 0.3s;
-        }
-        .property-card.active { 
-            border-color: var(--primary-red); 
-            background: rgba(255, 59, 59, 0.15); 
-            box-shadow: 0 0 15px rgba(255, 59, 59, 0.2);
-        }
-
-        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-
-        .card-content { padding: 15px; }
-        
-        .card-content h3 { 
-            margin: 0 0 8px 0; 
-            font-size: 13px; 
-            line-height: 1.5; 
-            color: var(--text-main);
-            font-weight: 500;
-        }
-        
-        .coords-label { 
-            color: var(--text-sub); 
-            font-size: 11px; 
-            display: block; 
-            margin-bottom: 15px; 
-            font-family: 'Courier New', monospace; 
-        }
-
-        .button-group {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-        }
-
+        /* Buttons */
         .btn { 
-            flex: 1; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            padding: 10px 5px; 
-            font-size: 10px; 
-            transition: 0.2s; 
-            text-align: center; 
-            text-decoration: none; 
-            box-sizing: border-box; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            white-space: nowrap; 
+            flex: 1; border: none; border-radius: 4px; cursor: pointer; 
+            font-weight: 700; padding: 10px; font-size: 10px; 
+            transition: 0.3s; text-decoration: none; text-align: center;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-transform: uppercase; color: white;
         }
-        
-        .btn-go { background: var(--primary-red); color: white; }
-        .btn-go:hover { background: #ff5c5c; box-shadow: 0 0 15px var(--accent-glow); }
-        .btn-go svg { fill: white; width: 14px; height: 14px; }
+        .btn-track { background: var(--primary-red); }
+        .btn-track:hover { background: #ff0000; box-shadow: 0 0 15px var(--accent-glow); }
+        .btn-maps { background: var(--gmaps-blue); }
+        .btn-maps:hover { background: #357ae8; }
 
-        .btn-maps { background: var(--gmaps-blue); color: white; }
-        .btn-maps:hover { background: #357ae8; box-shadow: 0 0 15px rgba(66, 133, 244, 0.4); }
-        .btn-maps svg { fill: white; width: 14px; height: 14px; }
-
-        .btn-wa { background: var(--wa-green); color: white; }
-        .btn-wa:hover { background: #20ba5a; box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
-        .btn-wa svg { fill: white; width: 14px; height: 14px; }
-        
-        .cesium-viewer-bottom { display: none !important; }
-
-         @media (max-width: 768px) {
-             body, html { overflow: auto !important; }
+        @media (max-width: 768px) {
+            body, html { overflow: auto !important; }
             #cesiumContainer { height: 50%; width: 100%; position: relative; }
             .sidebar {
                 position: relative; width: 100%; height: auto; border-left: none;
                 border-top: 2px solid var(--primary-red); background: rgba(5,5,5,0.9);
             }
                .cesium-viewer-toolbar { right: 0px !important; }
-            .map-instruction { display: none !important; }
+            .map-instruction { right: 40px; top: 13px; }
         }
+        .cesium-viewer-bottom { display: none !important; }
+        
     </style>
 </head>
 <body>
@@ -249,29 +193,26 @@
     <div id="cesiumContainer"></div>
 
     <div class="map-instruction">
-        <div class="instruction-text">MENGGUNAKAN ARCGIS WORLD IMAGERY</div>
-        <div class="instruction-arrow"></div>
+        <div class="instruction-text">GANTI BASEMAP > OTHER > ARCGIS WORLD IMAGERY</div>
     </div>
 
     <div class="sidebar">
         <div class="header">
-                    <img src="https://lh3.googleusercontent.com/u/0/d/1Mxur-oyaguVd2tdyrFfa4sSWGw4PFFuF" class="polri-logo" alt="Logo">
-          
-            <h2>firstian<span>PROSALES</span></h2>
+              <img src="https://lh3.googleusercontent.com/u/0/d/1Mxur-oyaguVd2tdyrFfa4sSWGw4PFFuF" class="polri-logo" alt="Logo">
+            <span class="unit-name"></span>
+            <span class="polda-name">firstian</span>
+            <span class="target-tag">PROSALES</span>
         </div>
-        <div id="analysisContent" class="analysis-box"></div>
+
+       
+
         <div id="propertyList" class="scroll-container"></div>
     </div>
 
 <script>
-    // 1. AKTIFKAN ARCGIS WORLD IMAGERY SECARA OTOMATIS SEBAGAI BASEMAP DEFAULT
-    const arcgisProvider = new Cesium.ArcGisMapServerImageryProvider({
-        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
-    });
-
+    // 1. Inisialisasi Viewer Cesium
     const viewer = new Cesium.Viewer('cesiumContainer', {
         terrainProvider: new Cesium.EllipsoidTerrainProvider(),
-        imageryProvider: arcgisProvider, // Set langsung di sini
         animation: false,
         timeline: false,
         infoBox: false,
@@ -283,7 +224,8 @@
         sceneModePicker: true
     });
 
-    const manualProperties = [
+    // 2. Database Target (Manual)
+     const manualProperties = [
         {
             name: `LT: 550m2 - LB: 200m2 (2 Lantai)<br>Jl. Raya Madrasah No.5, Cilandak Timur<br>SHM | Harga: 16.5M (Nego)<br>Pemilik: firstian`,
             coords: [-6.279543, 106.817916],
@@ -356,162 +298,115 @@
         }
     ];
 
-    let activeTrackIndex = null;
-    let laserLineEntity = null; // Menyimpan line laser secara terpisah
+    let activeIndex = null;
 
-    const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="4"/><path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="4"/><path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="4"/><path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="4"/><circle cx="50" cy="50" r="15" fill="none" /><circle cx="50" cy="50" r="5" fill="#ff3b3b" /></svg>`;
-    const base64Svg = 'data:image/svg+xml;base64,' + btoa(targetSvg);
-
-    const blinkingScale = new Cesium.CallbackProperty((time) => {
-        const seconds = Cesium.JulianDate.secondsDifference(time, Cesium.JulianDate.now());
-        return 0.8 + Math.abs(Math.sin(seconds * 5.0)) * 0.3;
-    }, false);
-
-    // Fungsi Analisis Data Konten
-    function updateAnalysis() {
-        const analysisContainer = document.getElementById('analysisContent');
-        const total = manualProperties.length;
-        
-        const wilayahCount = {};
-        manualProperties.forEach(p => {
-            const text = p.name.toLowerCase();
-            let loc = "Lainnya";
-            if (text.includes("jakarta selatan") || text.includes("jaksel") || text.includes("cilandak") || text.includes("jagakarsa")) loc = "Jakarta Selatan";
-            else if (text.includes("depok") || text.includes("limo") || text.includes("tapos")) loc = "Depok";
-            else if (text.includes("tanggerang selatan") || text.includes("pamulang")) loc = "Tangsel";
-            else if (text.includes("bogor")) loc = "Bogor";
-            else if (text.includes("jakarta barat")) loc = "Jakarta Barat";
-            
-            wilayahCount[loc] = (wilayahCount[loc] || 0) + 1;
-        });
-        
-        const topWilayah = Object.entries(wilayahCount).sort((a,b) => b[1] - a[1])[0][0];
-
-        analysisContainer.innerHTML = `
-            <div class="analysis-title">Content Analysis</div>
-            <div class="analysis-grid">
-                <div class="analysis-card">
-                    <small>Total Properti</small>
-                    <span>${total} Unit Terdata</span>
-                </div>
-                <div class="analysis-card">
-                    <small>Area Dominan</small>
-                    <span>${topWilayah}</span>
-                </div>
-            </div>
-        `;
-    }
-
+    // 3. Render Daftar Target ke Sidebar
     function renderList() {
         const container = document.getElementById('propertyList');
         container.innerHTML = '';
         manualProperties.forEach((prop, index) => {
-            const [lat, lng] = prop.coords;
             const card = document.createElement('div');
             card.className = 'property-card';
             card.id = `card-${index}`;
-            
-            const videoId = prop.ytId;
-            const videoUrl = `https://www.youtube.com/embed/${videoId}?mute=1&loop=1&playlist=${videoId}`;
-            const waUrl = `https://wa.me/6287796126529?text=Halo%20Firstian,%20saya%20tertarik%20dengan%20properti%20ini:%20${encodeURIComponent(prop.name.replace(/<br>/g, ' '))}`;
-            const gmapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-            
+            card.setAttribute('data-pelapor', prop.pelapor); 
             card.innerHTML = `
                 <div class="video-wrapper">
-                    <iframe src="${videoUrl}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/${prop.ytId}?autoplay=1&mute=1&loop=1&playlist=${prop.ytId}" allowfullscreen></iframe>
                 </div>
                 <div class="card-content">
                     <h3>${prop.name}</h3>
-                    <span class="coords-label"> ${lat.toFixed(6)}, ${lng.toFixed(6)}</span>
-                    
-                    <div class="button-group">
-                        <button class="btn btn-go" onclick="focusMap(${lat}, ${lng}, ${index})" title="Fokus Lokasi">
-                            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                        </button>
-                        <a href="${gmapsUrl}" target="_blank" class="btn btn-maps">
-                            <svg viewBox="0 0 24 24"><path d="M21.71 11.29l-9-9c-.39-.39-1.02-.39-1.41 0l-9 9c-.39.39-.39 1.02 0 1.41l9 9c.39.39 1.02.39 1.41 0l9-9c.39-.38.39-1.01 0-1.41zM14 14.5V12h-4v3H8v-4c0-.55.45-1 1-1h5V7.5l3.5 3.5-3.5 3.5z"/></svg>
-                        </a>
-                        <a href="${waUrl}" target="_blank" class="btn btn-wa">
-                            <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.319 1.592 5.448 0 9.886-4.438 9.889-9.887.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.735-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
-                        </a>
+                    <span class="coords-label">${prop.coords[0].toFixed(6)}, ${prop.coords[1].toFixed(6)}</span>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn btn-track" onclick="focusTarget(${prop.coords[0]}, ${prop.coords[1]}, ${index})">POSISI</button>
+                        <a href="https://www.google.com/maps?q=${prop.coords[0]},${prop.coords[1]}" target="_blank" class="btn btn-maps">LOKASI</a>
                     </div>
                 </div>`;
             container.appendChild(card);
         });
     }
 
-    // 2. TAMPILKAN SEMUA TITIK KOORDINAT DI AWAL SEBAGAI BILLBOARD/MARKER
-    function initAllMarkers() {
-        manualProperties.forEach((prop) => {
-            const [lat, lng] = prop.coords;
-            viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(lng, lat),
-                billboard: {
-                    image: base64Svg,
-                    scale: blinkingScale,
-                    verticalOrigin: Cesium.VerticalOrigin.CENTER,
-                    heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
-                }
-            });
-        });
+    // FUNGSI CARI NOMOR PELAPOR
+    function filterPelapor() {
+        const input = document.getElementById('pelaporSearch').value.toLowerCase();
+        const cards = document.getElementsByClassName('property-card');
+        
+        for (let i = 0; i < cards.length; i++) {
+            const noPelapor = cards[i].getAttribute('data-pelapor');
+            if (noPelapor && noPelapor.toLowerCase().includes(input)) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
     }
 
-    function focusMap(lat, lng, index) {
-        activeTrackIndex = index;
+    // 4. Fungsi Navigasi Kamera & Marker 3D
+    function focusTarget(lat, lng, index) {
+        viewer.entities.removeAll(); 
+        activeIndex = index;
         
         document.querySelectorAll('.property-card').forEach(c => c.classList.remove('active'));
         const activeCard = document.getElementById(`card-${index}`);
-        
         if(activeCard) {
             activeCard.classList.add('active');
-            const iframe = activeCard.querySelector('iframe');
-            const videoId = manualProperties[index].ytId;
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
             activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         const destination = Cesium.Cartesian3.fromDegrees(lng, lat);
 
-        // Hapus garis laser lama jika ada sebelum membuat yang baru
-        if (laserLineEntity) {
-            viewer.entities.remove(laserLineEntity);
-        }
-
-        // Buat garis penunjuk laser dari sidebar ke titik tujuan aktif
-        laserLineEntity = viewer.entities.add({
+        viewer.entities.add({
             polyline: {
                 positions: new Cesium.CallbackProperty(() => {
-                    if (activeTrackIndex === null) return [destination, destination];
-                    const el = document.getElementById(`card-${activeTrackIndex}`);
-                    if (!el) return [destination, destination];
-                    const rect = el.getBoundingClientRect();
+                    const cardElem = document.getElementById(`card-${activeIndex}`);
+                    if(!cardElem) return [destination, destination];
+                    const rect = cardElem.getBoundingClientRect();
                     const screenPos = new Cesium.Cartesian2(rect.left, rect.top + (rect.height / 2));
                     const ray = viewer.camera.getPickRay(screenPos);
                     const startPos = viewer.scene.globe.pick(ray, viewer.scene) || viewer.camera.position;
                     return [startPos, destination];
                 }, false),
-                width: 3,
-                material: Cesium.Color.RED,
-                depthFailMaterial: Cesium.Color.RED.withAlpha(0.5)
+                width: 2,
+                material: Cesium.Color.RED.withAlpha(0.5),
+                arcType: Cesium.ArcType.GEODESIC
             }
         });
 
-        // Terbang fokus ke area koordinat properti
+        const targetSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <path d="M 10 30 L 10 10 L 30 10" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 70 10 L 90 10 L 90 30" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 90 70 L 90 90 L 70 90" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <path d="M 30 90 L 10 90 L 10 70" fill="none" stroke="#ff3b3b" stroke-width="6"/>
+            <circle cx="50" cy="50" r="12" fill="none" stroke="#ff3b3b" stroke-width="3" />
+            <circle cx="50" cy="50" r="5" fill="#ff3b3b" />
+        </svg>`;
+
+        viewer.entities.add({
+            position: destination,
+            billboard: {
+                image: 'data:image/svg+xml;base64,' + btoa(targetSvg),
+                scale: new Cesium.CallbackProperty((time) => {
+                    const sec = Cesium.JulianDate.secondsDifference(time, Cesium.JulianDate.now());
+                    return 0.8 + Math.abs(Math.sin(sec * 4)) * 0.4; 
+                }, false),
+                verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+            }
+        });
+
         viewer.camera.flyTo({
             destination: Cesium.Cartesian3.fromDegrees(lng, lat, 400),
-            orientation: { pitch: Cesium.Math.toRadians(-35.0), heading: 0.0 },
-            duration: 2
+            orientation: { 
+                pitch: Cesium.Math.toRadians(-30.0), 
+                heading: 0.0 
+            },
+            duration: 2.5
         });
     }
 
-    // Inisialisasi
-    updateAnalysis();
     renderList();
-    initAllMarkers(); // Memunculkan seluruh titik koordinat di awal
-
-    // Mengarahkan kamera awal agar mencakup area Jabodetabek secara luas
+    
     viewer.camera.setView({ 
-        destination: Cesium.Cartesian3.fromDegrees(106.82, -6.35, 60000) 
+        destination: Cesium.Cartesian3.fromDegrees(106.82, -6.17, 30000) 
     });
 </script>
 </body>
